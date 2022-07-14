@@ -1,15 +1,16 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { User } from './auth.entity';
+import { User } from '../user/user.entity';
 import { AuthUserDto } from './dto/auth-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject('USER_REPOSITORY')
     private readonly userRepository: typeof User,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: AuthUserDto): Promise<User> {
@@ -31,7 +32,7 @@ export class AuthService {
       throw new BadRequestException('invalid credentials password');
     }
 
-    const payload = { email: user.email  };
+    const payload = { sub:user.id , email: user.email  };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -41,21 +42,9 @@ export class AuthService {
     return await this.userRepository.findAll();
   }
 
-
   findOneByEmail(email: string): Promise<User> {
     return  this.userRepository.findOne<User>({ where: { email } });
 }
-
-
-async validateUser(email: string, pass: string): Promise<any> {
-  const user = await this.findOneByEmail(email);
-  if (user && user.password === pass) {
-    const { password, ...result } = user;
-    return result;
-  }
-  return null;
-}
-
 
 
 }

@@ -1,4 +1,4 @@
-import { User } from "./auth.entity"
+import { User } from "../user/user.entity"
 
 export const userProviders = [
     {
