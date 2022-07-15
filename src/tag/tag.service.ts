@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
+import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tag.entity';
 
 @Injectable()
@@ -9,8 +10,20 @@ export class TagService {
         private readonly tagRepository: typeof Tag,
     ) {}
 
-    async create(createTagDto:CreateTagDto):Promise<Tag>{
-        return await this.tagRepository.create({name:createTagDto.name});
+    async create(dto:CreateTagDto):Promise<Tag>{
+        return await this.tagRepository.create({name:dto.name});
+    }
+
+    async update(dto:UpdateTagDto,id:number ):Promise<Tag>{
+        const updateTag = await this.tagRepository.findOne({
+            where: { id: id },
+        });
+        if(!updateTag){
+            throw new BadRequestException('Tag not found');
+        }
+        updateTag.name=dto.name;
+        await this.tagRepository.update(updateTag,{where:{id:dto.id}});
+        return updateTag;
     }
 
     async getall():Promise<Tag[]>{

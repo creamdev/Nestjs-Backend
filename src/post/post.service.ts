@@ -4,6 +4,7 @@ import { CreateBlogPostDto } from './dto/create-blogPost.dto';
 import { BlogPost } from './blogPost.entity';
 import { PostTag } from '../post-tag/posttag.entity';
 import { User } from 'src/user/user.entity';
+import { UpdateBlogPostDto } from './dto/update-blogPost.dto';
 
 @Injectable()
 export class PostService {
@@ -34,6 +35,25 @@ export class PostService {
     await this.postTagRepository.bulkCreate(postTags);
 
     return result;
+  }
+
+  async update(
+    updateBlogPostDto: UpdateBlogPostDto,
+    id:number
+  ):Promise<BlogPost>{
+    const updatePost = await this.blogPostRepository.findOne({
+      where: { id: id },
+      include: [{ model: User }, { model: Tag }],
+    });
+    if (!updatePost) {
+      throw new NotFoundException('Post not found');
+    }
+    updatePost.title = updateBlogPostDto.title;
+    updatePost.description = updateBlogPostDto.description;
+    await this.blogPostRepository.update(updatePost, {
+      where: { id: updateBlogPostDto.id },
+    });
+    return updatePost;
   }
 
   getall(): Promise<BlogPost[]> {
