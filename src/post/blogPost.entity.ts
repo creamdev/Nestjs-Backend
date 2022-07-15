@@ -1,7 +1,8 @@
-import { BelongsTo, BelongsToMany, Column, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { User } from "src/user/user.entity";
 import { Tag } from "../tag/tag.entity";
 import { PostTag } from "../post-tag/posttag.entity";
+import { Comment } from "src/comment/comment.entity";
 
 @Table
 export class BlogPost extends Model<BlogPost>{
@@ -11,6 +12,8 @@ export class BlogPost extends Model<BlogPost>{
     @Column
     description: string;
 
+    @HasMany(()=>Comment)
+    comments: Comment[];
     
     @BelongsToMany(
         ()=> Tag , 

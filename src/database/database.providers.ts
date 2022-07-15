@@ -3,6 +3,7 @@ import { BlogPost } from 'src/post/blogPost.entity';
 import { PostTag } from 'src/post-tag/posttag.entity';
 import { Tag } from 'src/tag/tag.entity';
 import { User } from 'src/user/user.entity';
+import { Comment } from 'src/comment/comment.entity';
 
 export const databaseProviders = [
     {
@@ -16,7 +17,7 @@ export const databaseProviders = [
                 password: 'postgres',
                 database: 'backend',
             })
-            sequelize.addModels([User,Tag,BlogPost,PostTag]);
+            sequelize.addModels([User,Tag,BlogPost,PostTag,Comment]);
             await sequelize.sync() 
             return sequelize;
         }
