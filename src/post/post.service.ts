@@ -4,6 +4,7 @@ import { CreateBlogPostDto } from './dto/create-blogPost.dto';
 import { BlogPost } from './blogPost.entity';
 import { PostTag } from '../post-tag/posttag.entity';
 import { User } from 'src/user/user.entity';
+import { Comment } from 'src/comment/comment.entity';
 import { UpdateBlogPostDto } from './dto/update-blogPost.dto';
 
 @Injectable()
@@ -50,6 +51,21 @@ export class PostService {
     }
     updatePost.title = updateBlogPostDto.title;
     updatePost.description = updateBlogPostDto.description;
+    
+    const postTags: Array<PostTag> = [];
+    for (var i = 0; i < updateBlogPostDto.tags.length; i++) {
+      var object: PostTag = {
+        postId: id,
+        tagId: updateBlogPostDto.tags[i],
+      } as PostTag;
+      postTags.push(object);
+    }
+    await this.postTagRepository.destroy({
+      where: {
+        postId: id,
+      },
+    });
+    await this.postTagRepository.bulkCreate(postTags);
     await this.blogPostRepository.update(updatePost, {
       where: { id: updateBlogPostDto.id },
     });
@@ -58,14 +74,14 @@ export class PostService {
 
   getall(): Promise<BlogPost[]> {
     return this.blogPostRepository.findAll({
-      include: [{ model: User }, { model: Tag }],
+      include: [{ model: User }, { model: Tag },{ model : Comment}],
     });
   }
 
   getBlogPost(id: number): Promise<BlogPost> {
     return this.blogPostRepository.findOne({
       where: { id: id },
-      include: [{ model: User }, { model: Tag }],
+      include: [{ model: User }, { model: Tag },{ model : Comment}],
     });
   }
 

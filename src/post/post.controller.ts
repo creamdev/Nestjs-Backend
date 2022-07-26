@@ -28,7 +28,7 @@ export class PostController {
     }
 
     @Get('')
-    @UseGuards(JwtAuthGuard)
+    //@UseGuards(JwtAuthGuard)
     getall(): Promise<BlogPost[]> {
         return this.postService.getall();
     }
